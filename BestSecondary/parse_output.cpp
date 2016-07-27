@@ -63,14 +63,14 @@ void AddRanges(std::vector<int> &vec, std::string line) {
   vec.push_back(range[1]);
 }
 
-std::string StripLabel(std::string label, std::string name, bool query) {
+std::string StripLabel(std::string label, std::string name, bool target) {
   std::vector<std::string> v;
   ToVector(v, label);
   int i = 0;
   std::string nolabel = "";
   while (true) {
     if (v[i] == name) {
-      if (query)
+      if (target)
         for (int j = i + 1; j < v.size(); j++)
           nolabel += v[j] + " ";
       else
@@ -124,9 +124,9 @@ int main(int argc, char const *argv[]) {
     while (std::getline(file, line)) {
 
       if (line.find("Query:") != std::string::npos) {
-        std::string line_q = StripLabel(line, "Query:", true);
+        std::string line_q = StripLabel(line, "Query:", false);
         if (line_q != current_query &&
-            line_q.find("|:[revcomp]") == std::string::npos) {
+            line_q.find("[revcomp]") == std::string::npos) {
           if (current_query != "")
             alignments.push_back(ai_temp);
           ai_temp = align_info();
@@ -135,7 +135,7 @@ int main(int argc, char const *argv[]) {
         }
       }
       if (line.find("Target:") != std::string::npos) {
-        std::string line_temp = StripLabel(line, "Target:", false);
+        std::string line_temp = StripLabel(line, "Target:", true);
         att_temp.d_gene = line_temp;
       }
       if (line.find("Raw score:") != std::string::npos) {
